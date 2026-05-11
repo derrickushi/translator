@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English to Kannada Translator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Include icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fa-solid fa-language"></i>
+                <h1>Translator</h1>
+            </div>
+            <p>Universal Translator</p>
+        </header>
+
+        <main>
+            {% if error_message %}
+            <div class="error-banner">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <p>{{ error_message }}</p>
+            </div>
+            {% endif %}
+
+            <div class="translator-card">
+                <form method="POST" action="/" id="translation-form">
+                    <div class="panels-container">
+                        <!-- Source Panel -->
+                        <div class="panel source-panel">
+                            <div class="panel-header">
+                                <select name="source_lang" class="lang-select">
+                                    <option value="auto" {% if source_lang == 'auto' %}selected{% endif %}>Auto Detect</option>
+                                    {% for name, code in languages.items() %}
+                                        <option value="{{ code }}" {% if source_lang == code %}selected{% endif %}>{{ name.title() }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="panel-body">
+                                <textarea 
+                                    name="text_to_translate" 
+                                    placeholder="Enter text here..." 
+                                    required
+                                >{{ original_text }}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Swap Icon -->
+                        <div class="swap-icon-container">
+                            <div class="swap-icon">
+                                <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                            </div>
+                        </div>
+
+                        <!-- Target Panel -->
+                        <div class="panel target-panel">
+                            <div class="panel-header">
+                                <select name="target_lang" class="lang-select">
+                                    {% for name, code in languages.items() %}
+                                        <option value="{{ code }}" {% if target_lang == code %}selected{% endif %}>{{ name.title() }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="panel-body">
+                                <textarea 
+                                    readonly 
+                                    placeholder="Translation will appear here..."
+                                >{{ translated_text }}</textarea>
+                            </div>
+                            {% if translated_text %}
+                            <div class="panel-footer">
+                                <button type="button" class="copy-btn" id="copy-btn" title="Copy to clipboard">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="actions">
+                        <button type="submit" class="translate-btn">
+                            <i class="fa-solid fa-language"></i> Translate
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Powered by Flask and Deep-Translator</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simple copy to clipboard functionality
+        const copyBtn = document.getElementById('copy-btn');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                const textToCopy = document.querySelector('.target-panel textarea').value;
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const icon = copyBtn.querySelector('i');
+                    icon.classList.remove('fa-regular', 'fa-copy');
+                    icon.classList.add('fa-solid', 'fa-check');
+                    setTimeout(() => {
+                        icon.classList.remove('fa-solid', 'fa-check');
+                        icon.classList.add('fa-regular', 'fa-copy');
+                    }, 2000);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
