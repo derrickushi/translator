@@ -27,7 +27,7 @@ A modern, web-based translation application built with Flask and `deep-translato
 
 3. Run the Flask application:
    ```bash
-   python trans.py
+   python app.py
    ```
 
 4. Open your browser and navigate to `http://127.0.0.1:5000/`.
